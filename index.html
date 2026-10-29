@@ -1,11 +1,11 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#071923"><link rel="manifest" href="./manifest.json"><title>FishIQ Victoria V3</title><style>:root{font-family:system-ui,sans-serif;color:#edf8fa;background:#071923}*{box-sizing:border-box}body{margin:auto;max-width:920px;padding:18px}h1{margin-bottom:4px}h1 span,a{color:#55ddc5}p,small{color:#b6cbd1;line-height:1.5}.card{background:#102b38;border:1px solid #31515c;border-radius:16px;padding:16px;margin:14px 0}button,select,input{background:#173b49;color:#fff;border:1px solid #52707a;border-radius:9px;padding:11px;font-size:16px;margin:4px 3px 4px 0;max-width:100%}button.active,.primary{background:#55ddc5;color:#06252c}label{display:block;margin-top:12px;color:#c9dfe3}.result{background:#09232e;padding:13px;border-radius:11px;margin:9px 0;border-left:3px solid #55ddc5}.result h3{margin:5px 0}.tag{display:inline-block;border:1px solid #56717a;padding:4px 8px;border-radius:20px;font-size:12px;margin:3px}.warn{color:#ffe3a4}.row{display:flex;flex-wrap:wrap;gap:6px}</style></head><body>
-<h1>🎣 FishIQ <span>Victoria V3</span></h1><p>Specific fishing spots • species-aware recommendations • automatic tide predictions</p>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#071923"><link rel="manifest" href="./manifest.json"><title>FishIQ Victoria V4</title><style>:root{font-family:system-ui,sans-serif;color:#edf8fa;background:#071923}*{box-sizing:border-box}body{margin:auto;max-width:920px;padding:18px}h1{margin-bottom:4px}h1 span,a{color:#55ddc5}p,small{color:#b6cbd1;line-height:1.5}.card{background:#102b38;border:1px solid #31515c;border-radius:16px;padding:16px;margin:14px 0}button,select,input{background:#173b49;color:#fff;border:1px solid #52707a;border-radius:9px;padding:11px;font-size:16px;margin:4px 3px 4px 0;max-width:100%}button.active,.primary{background:#55ddc5;color:#06252c}label{display:block;margin-top:12px;color:#c9dfe3}.result{background:#09232e;padding:13px;border-radius:11px;margin:9px 0;border-left:3px solid #55ddc5}.result h3{margin:5px 0}.tag{display:inline-block;border:1px solid #56717a;padding:4px 8px;border-radius:20px;font-size:12px;margin:3px}.warn{color:#ffe3a4}.row{display:flex;flex-wrap:wrap;gap:6px}</style></head><body>
+<h1>🎣 FishIQ <span>Victoria V4</span></h1><p>Specific fishing spots • species-aware recommendations • automatic tide predictions</p>
 <section class="card"><strong>Forecast period</strong><div id="horizons"><button class="active" data-hours="24">24 hours</button><button data-hours="72">3 days</button><button data-hours="168">7 days</button></div><label for="species">Target species</label><select id="species"><option>Squid</option><option>Snapper</option><option>King George whiting</option><option>Australian salmon</option><option>Flathead</option><option>Gummy shark</option><option>All species</option></select><label for="style">Fishing style</label><select id="style"><option>Land-based</option><option>Boat</option><option>Both</option></select><p><button class="primary" id="refresh">Refresh forecasts and tides</button></p><small id="status">Loading forecasts…</small></section>
-<section class="card"><h2>🏆 Top 5 fishing windows</h2><p>Compares named spots using regional weather, species habitat assumptions and time of day. Automatic tides are shown only when a tide station returns usable predictions. <strong>These are experimental planning scores, not catch probabilities or safety ratings.</strong></p><div id="rankings">Loading…</div></section>
-<section class="card"><h2>🌊 Automatic high and low tides</h2><p>Predictions are requested from <a href="https://openwaters.io/api/tides/" target="_blank" rel="noopener">Open Waters</a> for each fishing region. The tide station may be some distance from the exact fishing spot. Always compare with <a href="https://www.bom.gov.au/australia/tides/" target="_blank" rel="noopener">BOM's official tide tables</a> before fishing.</p><div id="tideStatus">Loading tide predictions…</div><small>No API key needed. If automatic tide data fails, the app will not guess tide phases or times.</small></section>
+<section class="card"><h2>🏆 Top 5 fishing windows</h2><p>Experimental planning scores based on weather, habitat, light and available tide predictions. <strong>Not catch probabilities or safety ratings.</strong></p><div id="rankings">Loading…</div></section>
+<section class="card"><h2>🌊 Automatic high and low tides</h2><p>Uses <a href="https://openwaters.io/api/tides/" target="_blank" rel="noopener">Open Waters</a>. Stations can differ from exact fishing spots. Check <a href="https://www.bom.gov.au/australia/tides/" target="_blank" rel="noopener">BOM tide tables</a> before fishing.</p><div id="tideStatus">Loading…</div><small>If the API fails, no tide times or phases are invented.</small></section>
 <section class="card"><h2>📍 Fishing spots</h2><div id="spots"></div></section>
 <section class="card"><h2>📓 Catch log</h2><label for="catchSpecies">Species caught</label><select id="catchSpecies"><option>Squid</option><option>Snapper</option><option>King George whiting</option><option>Australian salmon</option><option>Flathead</option><option>Gummy shark</option><option>Other</option></select><label for="count">Number caught</label><input id="count" type="number" min="0" value="1"><label for="notes">Notes</label><input id="notes" placeholder="Location, lure, bait, tide"><p><button id="saveCatch">Save catch</button></p><div id="catchLog"></div></section>
-<section class="card"><h2>⚠️ Fishing safety</h2><p class="warn">Always check marine warnings, actual local conditions, access and Victorian fishing regulations. These forecasts cannot establish safe boating or fishing conditions. Tide predictions are not suitable for navigation.</p><p><a href="https://www.bom.gov.au/marine/" target="_blank" rel="noopener">BOM marine warnings</a> · <a href="https://vfa.vic.gov.au/recreational-fishing" target="_blank" rel="noopener">Victorian fishing rules</a></p><small>Weather: Open-Meteo. Automatic tide predictions: Open Waters. Catch log: stored on this device. Spot locations are approximate, not navigation waypoints.</small></section>
+<section class="card"><h2>⚠️ Fishing safety</h2><p class="warn">Check marine warnings, conditions and Victorian fishing regulations. Forecasts are not a safety assessment. Tide predictions are not for navigation.</p><p><a href="https://www.bom.gov.au/marine/" target="_blank" rel="noopener">BOM marine warnings</a> · <a href="https://vfa.vic.gov.au/recreational-fishing" target="_blank" rel="noopener">Victorian fishing rules</a></p><small>Weather: Open-Meteo. Tides: Open Waters. Catch log stored on this device. Spot locations are approximate.</small></section>
 <script>
 'use strict';
 const regions={melbourne:{name:'Melbourne / northern Port Phillip',lat:-37.93,lon:145.00},port:{name:'Port Phillip / Mornington',lat:-38.15,lon:145.00},phillip:{name:'Phillip Island / San Remo',lat:-38.52,lon:145.35},western:{name:'Western Port',lat:-38.35,lon:145.22}};
@@ -14,70 +14,64 @@ const places=[
 ].map((p,i)=>({id:i,name:p[0],region:p[1],hab:p[2].split(','),boat:!!p[3]}));
 const $=id=>document.getElementById(id),safe=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const clock=ts=>new Date(ts*1000).toLocaleString('en-AU',{timeZone:'Australia/Melbourne',weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
-let hours=24,forecasts={},autoTides={};
+let hours=24,forecasts={},autoTides={},tideErrors={};
 function parseTideEvents(data){
- const raw=Array.isArray(data)?data:(data.extremes||data.predictions||data.events||data.data?.extremes||data.data?.predictions||data.data?.events||[]);
+ const raw=Array.isArray(data)?data:(data.extremes||data.predictions||data.events||data.data?.extremes||data.data?.predictions||data.data?.events||data.results||[]);
  if(!Array.isArray(raw))return [];
  return raw.map(e=>{
-  const type=String(e.type||e.event||e.kind||e.name||'').toLowerCase();
-  const kind=type.includes('high')?'High':type.includes('low')?'Low':null;
+  const type=String(e.label||e.type||e.event||e.kind||e.name||'').toLowerCase();
+  const kind=e.high===true||type.includes('high')?'High':e.low===true||type.includes('low')?'Low':null;
   const time=e.time??e.datetime??e.dateTime??e.date??e.timestamp??e.dt;
-  let ts=typeof time==='number'?(time>1e12?time/1000:time):Date.parse(time)/1000;
-  return {kind,ts,height:Number(e.height??e.level??e.value)};
+  const ts=typeof time==='number'?(time>1e12?time/1000:time):Date.parse(time)/1000;
+  const h=e.level??e.height??e.value;
+  return {kind,ts,height:h==null?NaN:Number(h)};
  }).filter(e=>e.kind&&Number.isFinite(e.ts)).sort((a,b)=>a.ts-b.ts);
 }
 function tideInfo(id,ts){
  const data=autoTides[id],events=data?.events||[];
  if(!events.length)return {phase:'Automatic tide unavailable',near:'No verified tide predictions for this area',score:null};
- const near=events.reduce((a,b)=>Math.abs(a.ts-ts)<Math.abs(b.ts-ts)?a:b);
- const mins=Math.abs(near.ts-ts)/60;
- const next=events.find(e=>e.ts>=ts);
- const prev=[...events].reverse().find(e=>e.ts<=ts);
+ const near=events.reduce((a,b)=>Math.abs(a.ts-ts)<Math.abs(b.ts-ts)?a:b),mins=Math.abs(near.ts-ts)/60;
+ const next=events.find(e=>e.ts>=ts),prev=[...events].reverse().find(e=>e.ts<=ts);
  let phase='Tide phase unavailable';
  if(mins<=25)phase='Near '+near.kind.toLowerCase()+' tide';
  else if(prev&&next&&prev!==next&&prev.kind!==next.kind)phase=prev.kind==='Low'?'Incoming / rising tide':'Outgoing / falling tide';
  const nearLabel=near.kind+' tide '+clock(near.ts)+(Number.isFinite(near.height)?' · '+near.height.toFixed(2)+' m':'');
  return {phase,near:nearLabel,score:phase==='Tide phase unavailable'?null:Math.max(0,Math.round(100-mins*100/120)),station:data.station};
 }
-function weatherScore(w,g,rain){
- if(!Number.isFinite(w))return null;
- const gust=Number.isFinite(g)?g:w;
- const p=Number.isFinite(rain)?rain:0;
- // Experimental conditions index; calm wind alone no longer produces 100/100.
- return Math.max(0,Math.min(95,Math.round(88-Math.max(0,w-5)*2.2-Math.max(0,gust-10)*1.1-p*.20)));
-}
+function weatherScore(w,g,rain){if(!Number.isFinite(w))return null;const gust=Number.isFinite(g)?g:w,p=Number.isFinite(rain)?rain:0;return Math.max(0,Math.min(95,Math.round(88-Math.max(0,w-5)*2.2-Math.max(0,gust-10)*1.1-p*.20)))}
 function lightScore(ts,sp){const h=Number(new Date(ts*1000).toLocaleString('en-GB',{timeZone:'Australia/Melbourne',hour:'2-digit',hour12:false})),dawn=h>=5&&h<=8,dusk=h>=17&&h<=20,night=h>=20||h<=4;if(sp==='Squid')return dawn||dusk?20:night?12:0;if(sp==='Snapper')return dawn||dusk?18:night?10:0;if(sp==='Australian salmon')return dawn||dusk?15:5;if(sp==='Gummy shark')return night?20:dusk?10:0;if(sp==='King George whiting')return h>=7&&h<=17?10:3;return dawn||dusk?12:5}
-async function forecast(id){const r=regions[id],u=new URL('https://api.open-meteo.com/v1/forecast');for(const [k,v] of Object.entries({latitude:r.lat,longitude:r.lon,timezone:'Australia/Melbourne',timeformat:'unixtime',forecast_days:8,hourly:'wind_speed_10m,wind_gusts_10m,precipitation_probability'}))u.searchParams.set(k,v);const res=await fetch(u);if(!res.ok)throw Error('Weather unavailable');return res.json()}
+async function forecast(id){const r=regions[id],u=new URL('https://api.open-meteo.com/v1/forecast');for(const [k,v] of Object.entries({latitude:r.lat,longitude:r.lon,timezone:'Australia/Melbourne',timeformat:'unixtime',forecast_days:8,hourly:'wind_speed_10m,wind_gusts_10m,precipitation_probability'}))u.searchParams.set(k,v);const res=await fetch(u);if(!res.ok)throw Error('Weather HTTP '+res.status);return res.json()}
 async function tideForecast(id){
  const r=regions[id],u=new URL('https://api.openwaters.io/tides/extremes');
  u.searchParams.set('latitude',r.lat);u.searchParams.set('longitude',r.lon);
- u.searchParams.set('start',new Date(Date.now()-12*3600000).toISOString());u.searchParams.set('end',new Date(Date.now()+8*86400000).toISOString());
- const res=await fetch(u);if(!res.ok)throw Error('Tide API HTTP '+res.status);
+ // The API supports default date range; avoid unsupported date parameters.
+ const res=await fetch(u,{cache:'no-store'});if(!res.ok)throw Error('Tide HTTP '+res.status);
  const data=await res.json(),events=parseTideEvents(data);
- if(!events.length)throw Error('No usable high/low tide events');
- const station=typeof data.station==='string'?data.station:(data.station?.name||data.stationName||data.metadata?.station?.name||'Nearest available tide station');
+ if(!events.length)throw Error('No recognised high/low events in API response');
+ const station=typeof data.station==='string'?data.station:(data.station?.name||data.stationName||data.metadata?.station?.name||'Nearest tide station');
  return {events,station};
 }
 async function refresh(){
- $('status').textContent='Loading live weather and tide predictions…';
- const keys=Object.keys(regions);
- const [w,t]=await Promise.all([Promise.allSettled(keys.map(forecast)),Promise.allSettled(keys.map(tideForecast))]);
- forecasts={};autoTides={};
+ $('status').textContent='Loading live weather and tide predictions…';const keys=Object.keys(regions);
+ const [w,t]=await Promise.all([Promise.allSettled(keys.map(forecast)),Promise.allSettled(keys.map(tideForecast))]);forecasts={};autoTides={};tideErrors={};
  w.forEach((r,i)=>{if(r.status==='fulfilled')forecasts[keys[i]]=r.value});
- t.forEach((r,i)=>{if(r.status==='fulfilled')autoTides[keys[i]]=r.value});
+ t.forEach((r,i)=>{if(r.status==='fulfilled')autoTides[keys[i]]=r.value;else tideErrors[keys[i]]=r.reason?.message||'Connection failed'});
  $('status').textContent=Object.keys(forecasts).length+' of 4 weather areas · '+Object.keys(autoTides).length+' of 4 tide areas · updated '+new Date().toLocaleTimeString('en-AU');
- $('tideStatus').innerHTML=keys.map(k=>'<div class="result"><strong>'+safe(regions[k].name)+'</strong><p>'+(autoTides[k]?'Automatic tide predictions loaded ('+autoTides[k].events.length+' events) · '+safe(autoTides[k].station):'Tide predictions unavailable — check BOM')+'</p></div>').join('');
- rank();
+ $('tideStatus').innerHTML=keys.map(k=>'<div class="result"><strong>'+safe(regions[k].name)+'</strong><p>'+(autoTides[k]?'Automatic tide predictions loaded ('+autoTides[k].events.length+' events) · '+safe(autoTides[k].station):'Tide predictions unavailable — '+safe(tideErrors[k]||'check BOM'))+'</p></div>').join('');rank();
 }
 function rank(){
  const sp=$('species').value,style=$('style').value,now=Date.now()/1000,end=now+hours*3600,candidates=[];
  for(const p of places){if(style==='Land-based'&&p.boat||style==='Boat'&&!p.boat)continue;if(sp!=='All species'&&!p.hab.includes(sp))continue;const d=forecasts[p.region];if(!d)continue;const h=d.hourly;
  for(let i=0;i<h.time.length;i++){const ts=h.time[i];if(ts<now||ts>end)continue;const w=h.wind_speed_10m[i],g=h.wind_gusts_10m[i],rain=h.precipitation_probability[i],ws=weatherScore(w,g,rain);if(ws===null)continue;const tide=tideInfo(p.region,ts),species=sp==='All species'?p.hab[0]:sp;const score=Math.round(ws*.55+20+lightScore(ts,species)*.75+(tide.score===null?0:tide.score*.1));candidates.push({p,ts,w,g,rain,ws,tide,score,species})}}
  const blocks=new Map();for(const c of candidates){const k=c.p.id+'-'+Math.floor(c.ts/10800);if(!blocks.has(k)||blocks.get(k).score<c.score)blocks.set(k,c)}
- const ranked=[...blocks.values()].sort((a,b)=>b.score-a.score||a.ts-b.ts),best=[],seen=new Set();for(const c of ranked){if(seen.has(c.p.id))continue;best.push(c);seen.add(c.p.id);if(best.length===5)break}
- $('rankings').innerHTML=best.length?best.map((c,i)=>`<div class="result"><small>RANK #${i+1} · EXPERIMENTAL</small><h3>${safe(c.p.name)}</h3><strong>${clock(c.ts)}</strong><p>${safe(c.species)} · ${c.p.boat?'Boat':'Land-based'}</p><span class="tag">Conditions ${c.ws}/100</span><span class="tag">${safe(c.tide.phase)}</span><p>${safe(c.tide.near)}</p><p>Wind ${c.w} km/h · Gusts ${c.g??'—'} km/h · Rain chance ${c.rain??'—'}%</p><small>Planning index: ${c.score}. Regional weather, habitat assumptions, time of day${c.tide.score===null?'':', automatic tide proximity'}. Not a catch probability.</small></div>`).join(''):'<p>No matching forecast windows. Try another species, fishing style or refresh.</p>';
+ const ranked=[...blocks.values()].sort((a,b)=>b.score-a.score).slice(0,5);
+ $('rankings').innerHTML=ranked.length?ranked.map((c,i)=>'<div class="result"><h3>#'+(i+1)+' '+safe(c.p.name)+'</h3><strong>'+clock(c.ts)+'</strong><p><span class="tag">'+safe(c.species)+'</span><span class="tag">Planning score '+c.score+'</span><span class="tag">Weather '+c.ws+'/100</span></p><p>Wind '+Number(c.w).toFixed(0)+' km/h · gusts '+Number(c.g).toFixed(0)+' km/h · rain chance '+Number(c.rain).toFixed(0)+'%</p><p>🌊 '+safe(c.tide.phase)+' · '+safe(c.tide.near)+'</p></div>').join(''):'No matching forecast windows available. Try a different species or fishing style.';
 }
-$('spots').innerHTML=places.map(p=>`<div class="result"><strong>${safe(p.name)}</strong><p>${safe(regions[p.region].name)} · ${p.boat?'Boat':'Land-based'}<br>${safe(p.hab.join(', '))}</p></div>`).join('');
-document.querySelectorAll('#horizons button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#horizons button').forEach(x=>x.classList.remove('active'));b.classList.add('active');hours=Number(b.dataset.hours);rank()});$('species').onchange=rank;$('style').onchange=rank;$('refresh').onclick=refresh;
-function readCatches(){try{return JSON.parse(localStorage.getItem('fishiqCatches')||'[]')}catch{return []}}function renderCatches(){$('catchLog').innerHTML=readCatches().slice(0,10).map(c=>`<div class="result"><strong>${safe(c.species)} × ${safe(c.count)}</strong><p>${safe(c.date)} · ${safe(c.notes)}</p></div>`).join('')||'<p>No catches logged yet.</p>'}$('saveCatch').onclick=()=>{const c=readCatches();c.unshift({date:new Date().toLocaleDateString('en-AU'),species:$('catchSpecies').value,count:Math.max(0,Number($('count').value)||0),notes:$('notes').value});localStorage.setItem('fishiqCatches',JSON.stringify(c.slice(0,100)));$('notes').value='';renderCatches()};renderCatches();if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').catch(console.warn);refresh();
+function readCatches(){try{const a=JSON.parse(localStorage.getItem('fishiqCatches')||'[]');return Array.isArray(a)?a:[]}catch{return []}}
+function showCatches(){$('catchLog').innerHTML=readCatches().slice().reverse().map(c=>'<div class="result"><strong>'+safe(c.species||c.sp||'Catch')+'</strong> · '+safe(c.count??1)+' caught<p>'+safe(c.notes||'')+'</p><small>'+safe(c.date||c.when||'')+'</small></div>').join('')||'<p>No catches recorded yet.</p>'}
+$('saveCatch').addEventListener('click',()=>{const c=readCatches();c.push({species:$('catchSpecies').value,count:Math.max(0,Number($('count').value)||0),notes:$('notes').value,date:new Date().toLocaleString('en-AU')});localStorage.setItem('fishiqCatches',JSON.stringify(c));$('notes').value='';showCatches()});
+$('horizons').addEventListener('click',e=>{const b=e.target.closest('button[data-hours]');if(!b)return;hours=Number(b.dataset.hours);document.querySelectorAll('#horizons button').forEach(x=>x.classList.toggle('active',x===b));rank()});
+$('species').addEventListener('change',rank);$('style').addEventListener('change',rank);$('refresh').addEventListener('click',refresh);
+$('spots').innerHTML=places.map(p=>'<span class="tag">'+safe(p.name)+'</span>').join('');showCatches();refresh();
+if('serviceWorker' in navigator){navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.update())).catch(()=>{})}
 </script></body></html>
