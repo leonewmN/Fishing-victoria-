@@ -1,0 +1,388 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#071923">
+<link rel="manifest" href="./manifest.json">
+<title>FishIQ Victoria</title>
+<style>
+:root{font-family:system-ui;color:#edf8fa;background:#071923}
+*{box-sizing:border-box}
+body{margin:0;padding:18px;max-width:950px;margin:auto}
+h1{font-size:30px;margin-bottom:0}
+h1 span{color:#55ddc5}
+p,small{color:#a9c5cc}
+.card{background:#102b38;border:1px solid #31515c;
+border-radius:15px;padding:16px;margin:13px 0}
+button,select,input{background:#173b49;color:white;
+border:1px solid #52707a;border-radius:9px;
+padding:11px;font-size:15px;margin:4px 3px 4px 0}
+button{cursor:pointer}
+button.active,.primary{background:#55ddc5;color:#06252c}
+select{max-width:100%}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.row>*{flex:1}
+.result{background:#09232e;padding:13px;border-radius:11px;
+margin:9px 0;border-left:3px solid #55ddc5}
+.result h3{margin:3px 0}
+.tag{display:inline-block;border:1px solid #56717a;
+padding:3px 8px;border-radius:20px;font-size:12px;margin:3px}
+a{color:#55ddc5}
+label{display:block;color:#b8cdd2;margin-top:9px}
+input[type=datetime-local]{width:100%}
+.warn{color:#ffe3a4}
+</style>
+</head>
+<body>
+<h1>🎣 FishIQ <span>Victoria</span></h1>
+<p>Your personal fishing conditions and window planner</p>
+
+<div class="card">
+<strong>Forecast period</strong>
+<div id="horizons">
+<button class="active" data-hours="24">24 hours</button>
+<button data-hours="72">3 days</button>
+<button data-hours="168">7 days</button>
+</div>
+<label>Target species</label>
+<select id="species">
+<option>Squid</option>
+<option>Snapper</option>
+<option>King George whiting</option>
+<option>Australian salmon</option>
+<option>Flathead</option>
+<option>Gummy shark</option>
+<option>All species</option>
+</select>
+<label>Fishing style</label>
+<select id="style">
+<option>Land-based</option>
+<option>Boat</option>
+<option>Both</option>
+</select>
+<p><button class="primary" id="refresh">Refresh forecasts</button></p>
+<small id="status">Waiting for forecast…</small>
+</div>
+
+<div class="card">
+<h2>🏆 Top 5 fishing windows</h2>
+<p>Automatically compares all four regions. Scores reflect
+forecast weather comfort and, where entered, tide proximity.
+They are not catch probabilities or boating safety ratings.</p>
+<div id="rankings">Loading…</div>
+</div>
+
+<div class="card">
+<h2>🌊 Tide predictions</h2>
+<p>Use the official BOM predictions for the relevant tide
+station. Enter times in Melbourne local time while your
+device is set to Melbourne time.</p>
+<p><a href="https://www.bom.gov.au/australia/tides/"
+target="_blank" rel="noopener">Open BOM tide predictions</a></p>
+<label>Region for these tide times</label>
+<select id="tideRegion"></select>
+<label>Predicted high tide</label>
+<input id="high" type="datetime-local">
+<label>Predicted low tide</label>
+<input id="low" type="datetime-local">
+<p><button id="saveTides">Save tide times</button></p>
+<small id="tideStatus">No tide times saved yet.</small>
+<p><small>Enter predictions for each region separately.
+This prototype stores one high and one low event per region,
+not a complete seven-day tide schedule.</small></p>
+</div>
+
+<div class="card">
+<h2>📍 Fishing regions</h2>
+<div id="regions"></div>
+</div>
+
+<div class="card">
+<h2>📓 Catch log</h2>
+<label>Species caught</label>
+<select id="catchSpecies">
+<option>Squid</option><option>Snapper</option>
+<option>King George whiting</option>
+<option>Australian salmon</option><option>Flathead</option>
+<option>Gummy shark</option><option>Other</option>
+</select>
+<label>Number caught</label>
+<input id="count" type="number" min="0" value="1">
+<label>Notes</label>
+<input id="notes" placeholder="Location, lure, bait, tide">
+<p><button id="saveCatch">Save catch</button></p>
+<div id="catchLog"></div>
+</div>
+
+<div class="card">
+<h2>⚠️ Safety and data</h2>
+<p class="warn">Always check official marine warnings,
+local tides, access conditions and Victorian fishing rules.
+The rankings cannot determine whether it is safe to fish
+or launch a boat.</p>
+<p><a href="https://www.bom.gov.au/marine/"
+target="_blank" rel="noopener">BOM marine forecasts</a></p>
+<p><a href="https://vfa.vic.gov.au/recreational-fishing"
+target="_blank" rel="noopener">Victorian fishing rules</a></p>
+<small>Weather: Open-Meteo forecast models.
+Tide data: manually entered from official predictions.
+Catch logs and tide entries are saved only on this device.
+No background alerts are included in this version.</small>
+</div>
+
+<script>
+const places=[
+ {id:"phillip",name:"Phillip Island / San Remo",
+ lat:-38.523,lon:145.358},
+ {id:"western",name:"Western Port Bay",
+ lat:-38.30,lon:145.20},
+ {id:"port",name:"Port Phillip Bay",
+ lat:-38.00,lon:145.00},
+ {id:"melbourne",name:"Melbourne beaches / piers",
+ lat:-37.865,lon:144.975}
+];
+
+const $=id=>document.getElementById(id);
+let hours=24,forecasts={};
+const savedTides=JSON.parse(
+ localStorage.getItem("fishiqTides")||"{}"
+);
+
+const safe=s=>String(s).replace(/[&<>"']/g,c=>({
+ "&":"&amp;","<":"&lt;",">":"&gt;",
+ '"':"&quot;","'":"&#39;"
+}[c]));
+
+const clock=ts=>new Date(ts*1000).toLocaleString(
+ "en-AU",{
+ timeZone:"Australia/Melbourne",
+ weekday:"short",day:"numeric",month:"short",
+ hour:"2-digit",minute:"2-digit"
+});
+
+$("tideRegion").innerHTML=places.map(p=>
+ `<option value="${p.id}">${p.name}</option>`
+).join("");
+
+function loadTideFields(){
+ const t=savedTides[$("tideRegion").value]||{};
+ $("high").value=t.high||"";
+ $("low").value=t.low||"";
+}
+$("tideRegion").onchange=loadTideFields;
+loadTideFields();
+
+$("saveTides").onclick=()=>{
+ const id=$("tideRegion").value;
+ savedTides[id]={
+  high:$("high").value,
+  low:$("low").value
+ };
+ localStorage.setItem(
+  "fishiqTides",JSON.stringify(savedTides)
+ );
+ $("tideStatus").textContent="Tide times saved for "+
+ places.find(p=>p.id===id).name;
+ rank();
+};
+
+function windScore(wind,gust){
+ if(!Number.isFinite(wind))return null;
+ return Math.max(0,Math.min(100,Math.round(
+ 100-Math.max(0,wind-8)*3.4
+ -Math.max(0,(gust??wind)-15)*1.2
+ )));
+}
+
+function tideProximity(placeId,ts){
+ const t=savedTides[placeId]||{};
+ const events=[t.high,t.low].filter(Boolean)
+  .map(x=>new Date(x).getTime())
+  .filter(Number.isFinite);
+ if(!events.length)return null;
+ const minutes=Math.min(...events.map(x=>
+  Math.abs(ts*1000-x)/60000
+ ));
+ return Math.max(0,Math.round(
+  100-minutes*100/90
+ ));
+}
+
+async function getForecast(p){
+ const url=new URL(
+  "https://api.open-meteo.com/v1/forecast"
+ );
+ url.searchParams.set("latitude",p.lat);
+ url.searchParams.set("longitude",p.lon);
+ url.searchParams.set("timezone","Australia/Melbourne");
+ url.searchParams.set("timeformat","unixtime");
+ url.searchParams.set("forecast_days","8");
+ url.searchParams.set("hourly",
+  "wind_speed_10m,wind_gusts_10m,"+
+  "precipitation_probability");
+ const response=await fetch(url);
+ if(!response.ok)throw Error("Forecast unavailable");
+ return await response.json();
+}
+
+async function refresh(){
+ $("status").textContent="Loading live forecasts…";
+ const results=await Promise.allSettled(
+  places.map(getForecast)
+ );
+ forecasts={};
+ results.forEach((r,i)=>{
+  if(r.status==="fulfilled")
+   forecasts[places[i].id]=r.value;
+ });
+ const n=Object.keys(forecasts).length;
+ $("status").textContent=n+
+  " of 4 regions updated · "+
+  new Date().toLocaleTimeString("en-AU");
+ renderRegions();
+ rank();
+}
+
+function renderRegions(){
+ $("regions").innerHTML=places.map(p=>{
+  const d=forecasts[p.id];
+  if(!d)return `<p>${p.name}: unavailable</p>`;
+  const i=d.hourly.time.findIndex(t=>
+   t>=Date.now()/1000
+  );
+  const ix=Math.max(0,i);
+  return `<div class="result">
+   <strong>${p.name}</strong>
+   <p>Wind: ${d.hourly.wind_speed_10m[ix]??"—"} km/h
+   · Gusts: ${d.hourly.wind_gusts_10m[ix]??"—"} km/h</p>
+   </div>`;
+ }).join("");
+}
+
+function rank(){
+ const now=Date.now()/1000;
+ const end=now+hours*3600;
+ const candidates=[];
+ for(const p of places){
+  const d=forecasts[p.id];
+  if(!d)continue;
+  const h=d.hourly;
+  for(let i=0;i<h.time.length;i++){
+   const ts=h.time[i];
+   if(ts<now||ts>end)continue;
+   const wind=h.wind_speed_10m[i];
+   const gust=h.wind_gusts_10m[i];
+   const base=windScore(wind,gust);
+   if(base===null)continue;
+   const tide=tideProximity(p.id,ts);
+   const rating=tide===null?base:
+    Math.round(base*.7+tide*.3);
+   candidates.push({
+    place:p,ts,wind,gust,base,tide,rating
+   });
+  }
+ }
+
+ // Select a top window from each 3-hour block per region.
+ const blocks=new Map();
+ for(const c of candidates){
+  const key=c.place.id+"-"+
+   Math.floor(c.ts/(3*3600));
+  if(!blocks.has(key)||
+   blocks.get(key).rating<c.rating)
+   blocks.set(key,c);
+ }
+
+ const best=[...blocks.values()]
+  .sort((a,b)=>b.rating-a.rating)
+  .slice(0,5);
+
+ if(!best.length){
+  $("rankings").textContent=
+   "No forecast windows available.";
+  return;
+ }
+
+ const species=$("species").value;
+ const style=$("style").value;
+ $("rankings").innerHTML=best.map((c,i)=>`
+  <div class="result">
+   <small>RANK #${i+1}</small>
+   <h3>${c.place.name}</h3>
+   <strong>${clock(c.ts)}</strong>
+   <p>${species} · ${style}</p>
+   <span class="tag">
+    Weather index ${c.base}/100
+   </span>
+   <span class="tag">
+    ${c.tide===null?
+     "Tide not included":
+     "Tide proximity "+c.tide+"/100"}
+   </span>
+   <p>Wind ${c.wind} km/h ·
+    Gusts ${c.gust??"—"} km/h</p>
+   <small>Combined planning index:
+    ${c.rating}/100
+    ${c.tide===null?
+     " (weather only)":
+     " (weather + entered tide)"}
+   </small>
+  </div>
+ `).join("");
+}
+
+document.querySelectorAll("#horizons button")
+.forEach(b=>b.onclick=()=>{
+ document.querySelectorAll("#horizons button")
+  .forEach(x=>x.classList.remove("active"));
+ b.classList.add("active");
+ hours=Number(b.dataset.hours);
+ rank();
+});
+
+$("species").onchange=rank;
+$("style").onchange=rank;
+$("refresh").onclick=refresh;
+
+function readCatches(){
+ try{
+  return JSON.parse(
+   localStorage.getItem("fishiqCatches")||"[]"
+  );
+ }catch{return []}
+}
+function renderCatches(){
+ $("catchLog").innerHTML=readCatches()
+  .slice(0,10).map(c=>`
+   <div class="result">
+    <strong>${safe(c.species)} × ${c.count}</strong>
+    <p>${safe(c.date)} · ${safe(c.notes)}</p>
+   </div>
+  `).join("")||"<p>No catches logged yet.</p>";
+}
+$("saveCatch").onclick=()=>{
+ const catches=readCatches();
+ catches.unshift({
+  date:new Date().toLocaleDateString("en-AU"),
+  species:$("catchSpecies").value,
+  count:Math.max(0,Number($("count").value)||0),
+  notes:$("notes").value
+ });
+ localStorage.setItem(
+  "fishiqCatches",JSON.stringify(catches.slice(0,100))
+ );
+ $("notes").value="";
+ renderCatches();
+};
+renderCatches();
+
+if("serviceWorker" in navigator){
+ navigator.serviceWorker.register("./sw.js")
+ .catch(console.warn);
+}
+refresh();
+</script>
+</body>
+</html>
