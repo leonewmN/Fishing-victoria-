@@ -1,0 +1,11 @@
+
+{
+  "name": "FishIQ Victoria",
+  "short_name": "FishIQ",
+  "description": "Victoria fishing conditions and window planner",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#071923",
+  "theme_color": "#071923"
+}
