@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#071923"><link rel="manifest" href="./manifest.json"><title>FishIQ Victoria V10</title><style>:root{font-family:system-ui,sans-serif;color:#edf8fa;background:#071923}*{box-sizing:border-box}body{margin:auto;max-width:920px;padding:18px}h1{margin-bottom:4px}h1 span,a{color:#55ddc5}p,small{color:#b6cbd1;line-height:1.5}.card{background:#102b38;border:1px solid #31515c;border-radius:16px;padding:16px;margin:14px 0}button,select,input{background:#173b49;color:#fff;border:1px solid #52707a;border-radius:9px;padding:11px;font-size:16px;margin:4px 3px 4px 0;max-width:100%}button.active,.primary{background:#55ddc5;color:#06252c}label{display:block;margin-top:12px;color:#c9dfe3}.result{background:#09232e;padding:13px;border-radius:11px;margin:9px 0;border-left:3px solid #55ddc5}.result h3{margin:5px 0}.tag{display:inline-block;border:1px solid #56717a;padding:4px 8px;border-radius:20px;font-size:12px;margin:3px}.warn{color:#ffe3a4}.row{display:flex;flex-wrap:wrap;gap:6px}#map{height:470px;border-radius:13px;margin:12px 0;background:#0c2631}.mapLegend{font-size:13px;color:#bdd5d8}.leaflet-popup-content{color:#162c31}.leaflet-popup-content p{color:#304a50}.mapControls{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.mapControls select{flex:1;min-width:135px}.leaflet-container{font-family:system-ui,sans-serif}</style><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoTAsuM8Wm3U=" crossorigin="">
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#071923"><link rel="manifest" href="./manifest.json"><title>FishIQ Victoria V11</title><style>:root{font-family:system-ui,sans-serif;color:#edf8fa;background:#071923}*{box-sizing:border-box}body{margin:auto;max-width:920px;padding:18px}h1{margin-bottom:4px}h1 span,a{color:#55ddc5}p,small{color:#b6cbd1;line-height:1.5}.card{background:#102b38;border:1px solid #31515c;border-radius:16px;padding:16px;margin:14px 0}button,select,input{background:#173b49;color:#fff;border:1px solid #52707a;border-radius:9px;padding:11px;font-size:16px;margin:4px 3px 4px 0;max-width:100%}button.active,.primary{background:#55ddc5;color:#06252c}label{display:block;margin-top:12px;color:#c9dfe3}.result{background:#09232e;padding:13px;border-radius:11px;margin:9px 0;border-left:3px solid #55ddc5}.result h3{margin:5px 0}.tag{display:inline-block;border:1px solid #56717a;padding:4px 8px;border-radius:20px;font-size:12px;margin:3px}.warn{color:#ffe3a4}.row{display:flex;flex-wrap:wrap;gap:6px}#map{height:470px;border-radius:13px;margin:12px 0;background:#0c2631}.mapLegend{font-size:13px;color:#bdd5d8}.leaflet-popup-content{color:#162c31}.leaflet-popup-content p{color:#304a50}.mapControls{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.mapControls select{flex:1;min-width:135px}.leaflet-container{font-family:system-ui,sans-serif}</style><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoTAsuM8Wm3U=" crossorigin="">
 <style id="leaflet-local-css">
 /* Bundled essential Leaflet layout so missing CDN styles cannot scatter tiles. */
 #map{position:relative!important;overflow:hidden!important;isolation:isolate!important;contain:layout paint!important;width:100%!important;height:420px!important;max-width:100%!important;border-radius:13px;touch-action:pan-x pan-y}
@@ -29,8 +29,18 @@
 @media(max-width:600px){#map{height:360px!important}}
 </style>
 </head><body>
-<h1>🎣 FishIQ <span>Victoria V10</span></h1><p>Expanded fishing spots • interactive score map • automatic tide predictions</p>
-<section class="card"><strong>Forecast period</strong><div id="horizons"><button class="active" data-hours="24">24 hours</button><button data-hours="72">3 days</button><button data-hours="168">7 days</button></div><label for="species">Target species</label><select id="species"><option>Squid</option><option>Snapper</option><option>King George whiting</option><option>Australian salmon</option><option>Flathead</option><option>Gummy shark</option><option>All species</option></select><label for="style">Fishing style</label><select id="style"><option>Land-based</option><option>Boat</option><option>Both</option></select><p><button class="primary" id="refresh">Refresh forecasts and tides</button></p><small id="status">Loading forecasts…</small></section>
+<h1>🎣 FishIQ <span>Victoria V11</span></h1><p>Expanded fishing spots • interactive score map • automatic tide predictions</p>
+<section class="card"><strong>Forecast period</strong><div id="horizons"><button class="active" data-hours="24">24 hours</button><button data-hours="72">3 days</button><button data-hours="168">7 days</button></div><div id="dayPlanner" style="border-top:1px solid #52707a;margin-top:18px;padding-top:15px">
+<h3 style="margin:0 0 5px">📅 Separate day &amp; location planner</h3>
+<small>Independent of the 24-hour, 3-day and 7-day rankings and interactive map.</small>
+<div class="plannerGrid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px">
+<div><label for="plannerDay">Choose a day (next 7 days)</label><select id="plannerDay" style="width:100%"></select></div>
+<div><label for="plannerPlace">Choose a location</label><select id="plannerPlace" style="width:100%"></select></div>
+<div><label for="plannerSpecies">Planner species</label><select id="plannerSpecies" style="width:100%"><option>All species</option><option>Squid</option><option>Snapper</option><option>King George whiting</option><option>Australian salmon</option><option>Flathead</option><option>Gummy shark</option></select></div>
+<div><label for="plannerStyle">Planner fishing style</label><select id="plannerStyle" style="width:100%"><option>Both</option><option>Land-based</option><option>Boat</option></select></div>
+</div>
+<div id="plannerResults" aria-live="polite"><p>Select a day and location to see their best forecast windows.</p></div>
+</div><label for="species">Target species</label><select id="species"><option>Squid</option><option>Snapper</option><option>King George whiting</option><option>Australian salmon</option><option>Flathead</option><option>Gummy shark</option><option>All species</option></select><label for="style">Fishing style</label><select id="style"><option>Land-based</option><option>Boat</option><option>Both</option></select><p><button class="primary" id="refresh">Refresh forecasts and tides</button></p><small id="status">Loading forecasts…</small></section>
 <section class="card"><h2>🏆 Top 5 fishing windows</h2><p>Experimental planning scores based on weather, habitat, light and available tide predictions. <strong>Not catch probabilities or safety ratings.</strong></p><div id="rankings">Loading…</div></section>
 <section class="card"><h2>🌊 Automatic high and low tides</h2><p>Uses <a href="https://openwaters.io/api/tides/" target="_blank" rel="noopener">Open Waters</a>. Stations can differ from exact fishing spots. Check <a href="https://www.bom.gov.au/australia/tides/" target="_blank" rel="noopener">BOM tide tables</a> before fishing.</p><div id="tideStatus">Loading…</div><small>If the API fails, no tide times or phases are invented.</small></section>
 <section class="card"><h2>🗺️ Interactive fishing map</h2><p>Tap a marker to see that spot's <strong>best forecast time and score</strong> for your selected period, species and fishing style. Green = 80+, amber = 65–79, red = below 65. Grey = no matching forecast. Scores are experimental, not catch probabilities.</p><div class="mapControls"><label for="areaFilter">Map area</label><select id="areaFilter"><option value="all">All areas</option><option value="melbourne">Melbourne / north bay</option><option value="port">Mornington / Port Phillip</option><option value="phillip">Phillip Island</option><option value="western">Western Port</option><option value="geelong">Geelong / Bellarine / west bay</option></select><label for="typeFilter">Spot type</label><select id="typeFilter"><option value="all">All types</option><option value="Pier">Piers / jetties</option><option value="Beach">Beaches / sand flats</option><option value="Rock">Rocks / shore</option><option value="Boat">Boat grounds</option></select></div><div id="map" role="application" aria-label="Fishing locations and forecast scores"></div><div id="spotDetails" class="result" aria-live="polite" style="display:none;margin-top:12px"></div><small id="mapStatus">Loading map…</small><label for="mapSpotSelect">Choose a fishing spot (also works if map taps fail)</label>
@@ -86,8 +96,55 @@ async function refresh(){
  w.forEach((r,i)=>{if(r.status==='fulfilled')forecasts[keys[i]]=r.value});
  t.forEach((r,i)=>{if(r.status==='fulfilled')autoTides[keys[i]]=r.value;else tideErrors[keys[i]]=r.reason?.message||'Connection failed'});
  $('status').textContent=Object.keys(forecasts).length+' of '+keys.length+' weather areas · '+Object.keys(autoTides).length+' of '+keys.length+' tide areas · updated '+new Date().toLocaleTimeString('en-AU');
- $('tideStatus').innerHTML=keys.map(k=>'<div class="result"><strong>'+safe(regions[k].name)+'</strong><p>'+(autoTides[k]?'Automatic tide predictions loaded ('+autoTides[k].events.length+' events) · '+safe(autoTides[k].station):'Tide predictions unavailable — '+safe(tideErrors[k]||'check BOM'))+'</p></div>').join('');rank();
+ $('tideStatus').innerHTML=keys.map(k=>'<div class="result"><strong>'+safe(regions[k].name)+'</strong><p>'+(autoTides[k]?'Automatic tide predictions loaded ('+autoTides[k].events.length+' events) · '+safe(autoTides[k].station):'Tide predictions unavailable — '+safe(tideErrors[k]||'check BOM'))+'</p></div>').join('');rank();renderPlanner();
 }
+
+// This planner is completely separate from the main forecast buttons, rankings and map.
+const melbourneDayKey=ts=>new Intl.DateTimeFormat('en-CA',{timeZone:'Australia/Melbourne',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(ts*1000));
+function initialisePlanner(){
+ const day=$('plannerDay'),place=$('plannerPlace');
+ const today=melbourneDayKey(Date.now()/1000);
+ // Noon UTC falls on the same calendar date in Melbourne, including DST.
+ const start=new Date(today+'T12:00:00Z');
+ day.innerHTML=Array.from({length:7},(_,i)=>{
+  const d=new Date(start.getTime()+i*86400000);
+  const key=d.toISOString().slice(0,10);
+  const label=i===0?'Today':new Intl.DateTimeFormat('en-AU',{timeZone:'UTC',weekday:'long',day:'numeric',month:'short'}).format(d);
+  return '<option value="'+key+'">'+label+'</option>';
+ }).join('');
+ place.innerHTML='<option value="all">All fishing locations</option>'+places.slice().sort((a,b)=>a.name.localeCompare(b.name)).map(p=>'<option value="'+p.id+'">'+safe(p.name)+'</option>').join('');
+ for(const id of ['plannerDay','plannerPlace','plannerSpecies','plannerStyle'])$(id).addEventListener('change',renderPlanner);
+}
+function renderPlanner(){
+ const el=$('plannerResults'),date=$('plannerDay').value,place=$('plannerPlace').value,sp=$('plannerSpecies').value,style=$('plannerStyle').value;
+ if(!Object.keys(forecasts).length){el.innerHTML='<p>Weather forecast unavailable. Try refreshing forecasts.</p>';return;}
+ const now=Date.now()/1000,results=[];
+ for(const p of places){
+  if(place!=='all'&&String(p.id)!==place)continue;
+  if(style==='Land-based'&&p.boat||style==='Boat'&&!p.boat)continue;
+  const species=sp==='All species'?p.hab[0]:sp;
+  if(!p.hab.includes(species))continue;
+  const f=forecasts[p.region];if(!f?.hourly)continue;
+  const h=f.hourly;
+  for(let i=0;i<h.time.length;i++){
+   const ts=h.time[i];if(ts<now||melbourneDayKey(ts)!==date)continue;
+   const w=Number(h.wind_speed_10m[i]),g=Number(h.wind_gusts_10m[i]),rain=Number(h.precipitation_probability[i]);
+   const ws=weatherScore(w,g,rain);if(ws===null)continue;
+   const tide=tideInfo(p.region,ts);
+   const score=Math.round(ws*.55+20+lightScore(ts,species)*.75+(tide.score===null?0:tide.score*.1));
+   results.push({p,ts,species,w,g,rain,ws,tide,score});
+  }
+ }
+ results.sort((a,b)=>b.score-a.score);
+ // Prefer distinct 3-hour windows and spots so the planner does not repeat adjacent hours.
+ const chosen=[],seen=new Set();
+ for(const c of results){const key=c.p.id+'-'+Math.floor(c.ts/10800);if(seen.has(key))continue;seen.add(key);chosen.push(c);if(chosen.length===5)break;}
+ el.innerHTML=chosen.length?'<p><strong>Best '+chosen.length+' forecast windows for '+safe(date)+'</strong></p>'+chosen.map((c,i)=>
+  '<div class="result"><strong>#'+(i+1)+' '+safe(c.p.name)+'</strong><p><b>'+safe(clock(c.ts))+'</b> · '+safe(c.species)+'</p><p>Planning score '+c.score+'/100 · Weather '+c.ws+'/100 · Wind '+Math.round(c.w)+' km/h · Gusts '+Math.round(c.g)+' km/h</p><p>🌊 '+safe(c.tide.phase)+' · '+safe(c.tide.near)+'</p></div>'
+ ).join(''):'<p>No matching future forecast hours for this day, location, species and fishing style. Try another selection.</p>';
+}
+initialisePlanner();
+
 function rank(){
  const sp=$('species').value,style=$('style').value,now=Date.now()/1000,end=now+hours*3600,candidates=[];
  for(const p of places){if(style==='Land-based'&&p.boat||style==='Boat'&&!p.boat)continue;if(sp!=='All species'&&!p.hab.includes(sp))continue;const d=forecasts[p.region];if(!d)continue;const h=d.hourly;
